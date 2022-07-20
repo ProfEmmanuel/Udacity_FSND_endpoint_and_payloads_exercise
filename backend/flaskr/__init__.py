@@ -38,6 +38,19 @@ def create_app(test_config=None):
     #         update the frontend to handle additional books in the styling and pagination
     #         Response body keys: 'success', 'books' and 'total_books'
     # TEST: When completed, the webpage will display books including title, author, and rating shown as stars
+    @app.route('/books')
+    def get_books():
+        page = request.args.get('page', 1, type=int)
+        start = (page - 1) * 10
+        end = start + BOOKS_PER_SHELF
+        books = Book.query.all()
+        formatted_books = [book.format() for book in books]
+
+        return jsonify({
+            'success': True,
+            'books': formatted_books[start:end],
+            'total_books': len(formatted_books)
+            })
 
     # @TODO: Write a route that will update a single book's rating.
     #         It should only be able to update the rating, not the entire representation
